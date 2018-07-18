@@ -7,33 +7,35 @@ env:
   global:
     - SKIP_SASS_BINARY_DOWNLOAD_FOR_CI=true
 
+stages:
+  - lint
+  - test
+
 jobs:
   include:
+    - stage: lint
+      node_js: "10.0"
+      os: linux
+      install: npm install --ignore-scripts
+      script: npm run lint || exit 1;
+
     - stage: test
-      node_js: "10"
+      node_js: "lts/boron"
       os: linux
-      before_script: npm run lint || exit 1;
+    - node_js: "lts/boron"
+      os: osx
+    - node_js: "lts/carbon"
+      os: linux
+    - node_js: "lts/carbon"
+      os: osx
+    - node_js: "9"
+      os: linux
+    - node_js: "9"
+      os: osx
+    - node_js: "10.0"
+      os: linux
       after_success: npm run-script coverage;
-    - stage: platform-test
-      node_js: "lts/boron"
-      os: linux
-    - stage: platform-test
-      node_js: "lts/boron"
-      os: osx
-    - stage: platform-test
-      node_js: "lts/carbon"
-      os: linux
-    - stage: platform-test
-      node_js: "lts/carbon"
-      os: osx
-    - stage: platform-test
-      node_js: "9"
-      os: linux
-    - stage: platform-test
-      node_js: "9"
-      os: osx
-    - stage: platform-test
-      node_js: "10"
+    - node_js: "10.0"
       os: osx
 
 addons:
