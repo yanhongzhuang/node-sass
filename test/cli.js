@@ -7,6 +7,7 @@ var assert = require('assert'),
   stream = require('stream'),
   spawn = require('cross-spawn'),
   cli = path.join(__dirname, '..', 'bin', 'node-sass'),
+  sass = require('../lib'),
   fixture = path.join.bind(null, __dirname, 'fixtures');
 
 function isNapiError(error) {
@@ -452,7 +453,7 @@ describe('cli', function() {
       });
     });
 
-    it('should compile with the --source-map-embed option and no outfile', function(done) {
+    it.only('should compile with the --source-map-embed option and no outfile', function(done) {
       var src = fixture('source-map-embed/index.scss');
       var expectedCss = read(fixture('source-map-embed/expected.css'), 'utf8').trim().replace(/\r\n/g, '\n');
       var result = '';
@@ -462,11 +463,29 @@ describe('cli', function() {
         '--source-map', 'true'
       ]);
 
+      // sass.render({
+      //   file: src,
+      //   sourceMapEmbed: true,
+      //   sourceMap: true,
+      // }, function(err, results) {
+      //   console.log('err:', err);
+      //   console.log('results:', results.css.toString());
+      //   console.log('expectedCss:', expectedCss);
+      //   console.log(results.css.toString() === expectedCss);
+      // });
+
       bin.stdout.on('data', function(data) {
+        console.log('stdout', data.toString());
         result += data;
       });
 
+      bin.stderr.on('data', function(data) {
+        console.log('stderr', data.toString());
+      });
+
       bin.once('close', function() {
+        console.log('raw result:', result.toString());
+        console.log('trimmed result:', result.trim().replace(/\r\n/g, '\n'));
         assert.equal(result.trim().replace(/\r\n/g, '\n'), expectedCss);
         done();
       });
