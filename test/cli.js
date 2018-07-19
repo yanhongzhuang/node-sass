@@ -457,7 +457,8 @@ describe('cli', function() {
       var src = fixture('source-map-embed/index.scss');
       var expectedCss = read(fixture('source-map-embed/expected.css'), 'utf8').trim().replace(/\r\n/g, '\n');
       var result = '';
-      var bin = spawn(cli, [
+      var bin = require('child_process').spawn('node', [
+        'cli',
         src,
         '--source-map-embed',
         '--source-map', 'true'
@@ -475,17 +476,17 @@ describe('cli', function() {
       // });
 
       bin.stdout.on('data', function(data) {
-        console.log('stdout', data.toString());
+        // console.log('stdout', data.toString());
         result += data;
       });
 
       bin.stderr.on('data', function(data) {
-        console.log('stderr', data.toString());
+        // console.log('stderr', data.toString());
       });
 
       bin.once('close', function() {
-        console.log('raw result:', result.toString());
-        console.log('trimmed result:', result.trim().replace(/\r\n/g, '\n'));
+        // console.log('raw result:', result.toString());
+        // console.log('trimmed result:', result.trim().replace(/\r\n/g, '\n'));
         assert.equal(result.trim().replace(/\r\n/g, '\n'), expectedCss);
         done();
       });
