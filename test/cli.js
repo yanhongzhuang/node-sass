@@ -456,38 +456,16 @@ describe('cli', function() {
     it.only('should compile with the --source-map-embed option and no outfile', function(done) {
       var src = fixture('source-map-embed/index.scss');
       var expectedCss = read(fixture('source-map-embed/expected.css'), 'utf8').trim().replace(/\r\n/g, '\n');
-      var result = '';
-      var bin = require('child_process').spawn('node', [
-        'cli',
+      require('child_process').exec([
+        'node',
+        cli,
         src,
         '--source-map-embed',
-        '--source-map', 'true'
-      ]);
-
-      // sass.render({
-      //   file: src,
-      //   sourceMapEmbed: true,
-      //   sourceMap: true,
-      // }, function(err, results) {
-      //   console.log('err:', err);
-      //   console.log('results:', results.css.toString());
-      //   console.log('expectedCss:', expectedCss);
-      //   console.log(results.css.toString() === expectedCss);
-      // });
-
-      bin.stdout.on('data', function(data) {
-        // console.log('stdout', data.toString());
-        result += data;
-      });
-
-      bin.stderr.on('data', function(data) {
-        // console.log('stderr', data.toString());
-      });
-
-      bin.once('close', function() {
-        // console.log('raw result:', result.toString());
-        // console.log('trimmed result:', result.trim().replace(/\r\n/g, '\n'));
-        assert.equal(result.trim().replace(/\r\n/g, '\n'), expectedCss);
+        '--source-map',
+        'true',
+      ].join(' '), function(err, stdout, stderr) {
+        console.log({ err: err, stdout: stdout.toString(), stderr: stderr.toString() });
+        assert.equal(stdout.toString().trim().replace(/\r\n/g, '\n'), expectedCss);
         done();
       });
     });
